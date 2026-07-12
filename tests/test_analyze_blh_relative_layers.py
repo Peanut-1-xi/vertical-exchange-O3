@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 from analyze_blh_relative_layers_hf_cf_2023 import (
     assign_blh_layer,
     calculate_diagnostics,
     hourly_layer_means,
+    plot_layer_comparison,
+    plot_wrf_flux_decomposition,
     summarize_layers,
 )
 
@@ -91,3 +96,49 @@ def test_two_stage_average_gives_each_hour_equal_weight() -> None:
     assert hourly["fadv_ug_m2_s"].tolist() == [0.0, 100.0]
     assert summary.loc[0, "fadv_mean"] == 50.0
     assert summary.loc[0, "valid_hours"] == 2
+
+
+def synthetic_summary() -> pd.DataFrame:
+    rows = []
+    for source_index, source in enumerate(("ERA5", "WRF")):
+        for station_index, station in enumerate(("HF", "CF")):
+            for layer_index, layer in enumerate(
+                ("within_pbl", "pbl_top", "above_pbl")
+            ):
+                base = 1.0 + source_index + station_index + layer_index
+                rows.append(
+                    {
+                        "source": source,
+                        "station": station,
+                        "blh_layer": layer,
+                        "valid_hours": 10,
+                        "o3_mean": 70.0 + 5.0 * base,
+                        "o3_sem": 1.0,
+                        "w_mean": (base - 3.0) * 0.001,
+                        "w_sem": 0.0002,
+                        "fadv_mean": base - 3.0,
+                        "fadv_sem": 0.2,
+                        "tfh_mean": 50.0 * base,
+                        "tfh_sem": 3.0,
+                        "fturb_mean": 0.5 * (3.0 - base),
+                        "fturb_sem": 0.1,
+                        "ftotal_mean": 0.5 * (base - 3.0),
+                        "ftotal_sem": 0.15,
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def test_summary_plot_functions_create_nonblank_pngs(tmp_path: Path) -> None:
+    comparison = tmp_path / "comparison.png"
+    decomposition = tmp_path / "decomposition.png"
+
+    plot_layer_comparison(synthetic_summary(), comparison)
+    plot_wrf_flux_decomposition(synthetic_summary(), decomposition)
+
+    for path in (comparison, decomposition):
+        with Image.open(path) as image:
+            pixels = np.asarray(image.convert("RGB"))
+            assert image.width >= 1800
+            assert image.height >= 1000
+            assert pixels.std() > 5.0

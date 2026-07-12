@@ -56,6 +56,7 @@ w_geo = -omega / (rho * g)
 ### 4. 通量诊断
 
 - `compute_effective_turbulence_from_era5.py`：基于ERA5垂直速度估算等效湍流系数
+- `analyze_blh_relative_layers_hf_cf_2023.py`：按逐小时BLH动态划分边界层内、边界层顶和边界层以上并统计输送差异
 - `plot_three_vertical_flux_methods_hf_cf_2023.py`：WRF平流、湍流扩散和总通量，以及ERA5平流通量
 - `plot_paper_fig1_fig3_o3_hf_cf_2023.py`：论文Figure 1和Figure 3的O3部分
 - `plot_paper_figure4_method_o3_tfw.py`：论文Figure 4方法的O3垂直输送通量
@@ -100,4 +101,3 @@ python -m pytest tests -q
 ## 路径说明
 
 部分历史脚本保留了本地绝对路径，例如 `E:/research/垂直交换/...`。在其他计算机运行前，应修改脚本顶部的 `BASE_DIR`、输入文件和输出目录常量。原始及处理数据均由 `.gitignore` 排除。
-
