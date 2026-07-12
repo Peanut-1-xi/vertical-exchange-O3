@@ -1,0 +1,48 @@
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local environments and credentials
+.env
+.env.*
+.venv/
+venv/
+.cdsapirc
+cdsapirc*
+*credentials*.json
+*secret*.json
+
+# Downloaded and processed research data
+*.nc
+*.nc4
+*.grib
+*.grib2
+*.csv
+*.xlsx
+*.xls
+
+# Large local reference documents
+*.pdf
+*.docx
+
+# Runtime logs and queue output
+*.log
+*stderr*.txt
+*stdout*.txt
+
+# Temporary extracts and local inspection images
+_pdf_text_extract/
+_tmp_*
+*_extracted.txt
+paper_fulltext.txt
+paper_highlights_and_sections.txt
+era5_nc_summary.txt
+xshell_*.png
+xftp_*.png
+
+# Local worktree and backup link locations
+.worktrees/
+worktrees/
