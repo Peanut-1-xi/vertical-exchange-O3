@@ -1,0 +1,10 @@
+cdsapi>=0.7
+ecmwf-datastores-client>=0.4
+matplotlib>=3.8
+netCDF4>=1.6
+numpy>=1.26
+openpyxl>=3.1
+pandas>=2.1
+Pillow>=10.0
+pytest>=8.0
+XlsxWriter>=3.2
