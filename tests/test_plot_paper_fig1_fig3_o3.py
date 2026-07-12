@@ -7,6 +7,7 @@ import pandas as pd
 from PIL import Image
 import pytest
 
+import plot_paper_fig1_fig3_o3_hf_cf_2023 as figure_module
 from plot_paper_fig1_fig3_o3_hf_cf_2023 import (
     aggregate_daytime_profile,
     aggregate_hour_height,
@@ -99,3 +100,25 @@ def test_plot_functions_create_nonblank_pngs(tmp_path: Path) -> None:
             assert image.width >= 1800
             assert image.height >= 1000
             assert np.asarray(image.convert("RGB")).std() > 5.0
+
+
+def test_main_generates_exactly_four_source_consistent_figures(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    era5_file = tmp_path / "era5.csv"
+    wrf_file = tmp_path / "wrf.csv"
+    output_dir = tmp_path / "output"
+    plot_frame().assign(source="ERA5").to_csv(era5_file, index=False)
+    plot_frame().assign(source="WRF").to_csv(wrf_file, index=False)
+    monkeypatch.setattr(figure_module, "ERA5_FILE", era5_file)
+    monkeypatch.setattr(figure_module, "WRF_FILE", wrf_file)
+    monkeypatch.setattr(figure_module, "OUTPUT_DIR", output_dir)
+
+    figure_module.main()
+
+    assert sorted(path.name for path in output_dir.glob("*.png")) == [
+        "ERA5_Fig1_O3_HF_CF时间高度分布.png",
+        "ERA5_Fig3_O3水平输送通量_HF_CF.png",
+        "WRF_Fig1_O3_HF_CF时间高度分布.png",
+        "WRF_Fig3_O3水平输送通量_HF_CF.png",
+    ]

@@ -370,3 +370,23 @@ def plot_figure3_o3(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+
+
+def main() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for source, path in (("ERA5", ERA5_FILE), ("WRF", WRF_FILE)):
+        frame = calculate_horizontal_flux(read_source(path, source))
+        plot_figure1_o3(
+            frame,
+            source,
+            OUTPUT_DIR / f"{source}_Fig1_O3_HF_CF时间高度分布.png",
+        )
+        plot_figure3_o3(
+            frame,
+            source,
+            OUTPUT_DIR / f"{source}_Fig3_O3水平输送通量_HF_CF.png",
+        )
+
+
+if __name__ == "__main__":
+    main()
